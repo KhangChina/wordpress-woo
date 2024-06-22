@@ -1,54 +1,53 @@
 version: '3.3'
 
 services:
-   db:
-     image: mysql:5.7
-     volumes:
-       - ./database:/docker-entrypoint-initdb.d
-     restart: always
-     environment:
-       MYSQL_ROOT_PASSWORD: somewordpress
-       MYSQL_DATABASE: wordpress
-       MYSQL_USER: wordpress
-       MYSQL_PASSWORD: wordpress
-     networks:
-       - wordpress_network
+  db:
+    image: mysql:5.7
+    volumes:
+      - ./database:/docker-entrypoint-initdb.d
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: somewordpress
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+    networks:
+      - wordpress_network
 
-   wordpress:
-     depends_on:
-       - db
-     build: 
-        context: .
-        dockerfile: Dockerfile
-     ports:
-       - "81:80"
-     restart: always
-     environment:
-       WORDPRESS_DB_HOST: db:3306
-       WORDPRESS_DB_USER: wordpress
-       WORDPRESS_DB_PASSWORD: wordpress
-       WORDPRESS_DB_NAME: wordpress
-     volumes:
-       - ./:/var/www/html
-       - ./.docker:/usr/local/etc/php/conf.d
-     networks:
-       - wordpress_network
+  wordpress:
+    depends_on:
+      - db
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "81:80"
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - ./:/var/www/html
+      - ./.docker:/usr/local/etc/php/conf.d
+    networks:
+      - wordpress_network
 
-   phpmyadmin:
-     depends_on:
-       - db
-     image: phpmyadmin/phpmyadmin
-     restart: always
-     ports:
-       - "8081:80"
-     environment:
-       PMA_HOST: db
-     networks:
-       - wordpress_network
-
+  phpmyadmin:
+    depends_on:
+      - db
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+    networks:
+      - wordpress_network
 
 volumes:
-    db_data: {}
+  db_data: {}
 
 networks:
   wordpress_network:
